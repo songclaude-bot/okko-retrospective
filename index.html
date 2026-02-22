@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OKKO in OKKY — 해커톤 후기</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=JetBrains+Mono:wght@300;400&family=Noto+Sans+KR:wght@200;300;400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #08080d;
+    --surface: #111118;
+    --border: #1a1a25;
+    --text: #c8c8d0;
+    --text-dim: #666680;
+    --accent: #f43f5e;
+    --accent2: #667eea;
+    --accent3: #f093fb;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans KR', 'Inter', sans-serif;
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+
+  canvas#stars {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Hero */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  .hero-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 0.3s;
+  }
+
+  .hero-title {
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #fff 0%, #c8c8d0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 0.5s;
+  }
+
+  .hero-sub {
+    font-size: clamp(1rem, 3vw, 1.3rem);
+    font-weight: 300;
+    color: var(--text-dim);
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 0.7s;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 0.9s;
+  }
+
+  .hero-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .hero-meta .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: var(--text-dim);
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 1.2s;
+  }
+
+  .scroll-hint::after {
+    content: '';
+    display: block;
+    width: 1px; height: 30px;
+    background: linear-gradient(to bottom, var(--text-dim), transparent);
+    margin: 0.5rem auto 0;
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+
+  /* Sections */
+  section {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem;
+  }
+
+  .section-wide {
+    max-width: 1000px;
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 1rem;
+  }
+
+  h2 {
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    font-weight: 600;
+    color: #e8e8f0;
+    margin-bottom: 1.5rem;
+    line-height: 1.4;
+  }
+
+  p {
+    margin-bottom: 1.2rem;
+    font-weight: 300;
+    font-size: 0.95rem;
+  }
+
+  .highlight {
+    color: var(--accent3);
+    font-weight: 400;
+  }
+
+  .accent-text {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* Divider */
+  .divider {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .divider-line {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+
+  /* Image */
+  .img-card {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    margin: 2rem 0;
+    background: var(--surface);
+  }
+
+  .img-card img {
+    width: 100%;
+    display: block;
+  }
+
+  .img-caption {
+    padding: 0.8rem 1rem;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  /* Image Grid */
+  .img-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+
+  .img-grid .img-card {
+    margin: 0;
+  }
+
+  @media (max-width: 600px) {
+    .img-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Quote */
+  .quote-block {
+    border-left: 2px solid var(--accent);
+    padding: 1.5rem 2rem;
+    margin: 2.5rem 0;
+    background: rgba(244, 63, 94, 0.03);
+    border-radius: 0 8px 8px 0;
+  }
+
+  .quote-block p {
+    font-size: 1.05rem;
+    font-weight: 400;
+    color: #d0d0e0;
+    margin-bottom: 0;
+    font-style: italic;
+  }
+
+  .quote-block .quote-src {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    font-style: normal;
+    margin-top: 0.8rem;
+  }
+
+  /* Tech Stack */
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.8rem;
+    margin: 1.5rem 0;
+  }
+
+  .tech-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    font-size: 0.8rem;
+    text-align: center;
+    transition: border-color 0.3s;
+  }
+
+  .tech-item:hover {
+    border-color: var(--accent2);
+  }
+
+  .tech-item .tech-name {
+    color: #e0e0f0;
+    font-weight: 500;
+    margin-bottom: 0.2rem;
+  }
+
+  .tech-item .tech-role {
+    color: var(--text-dim);
+    font-size: 0.7rem;
+  }
+
+  /* Award */
+  .award-section {
+    text-align: center;
+    padding: 6rem 1.5rem;
+  }
+
+  .award-badge {
+    display: inline-block;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    font-weight: 700;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b, #d97706);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+  }
+
+  .award-detail {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+  }
+
+  /* Pipeline */
+  .pipeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 2rem 0;
+  }
+
+  .pipeline-step {
+    display: flex;
+    gap: 1.2rem;
+    align-items: flex-start;
+  }
+
+  .pipeline-line {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .pipeline-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent2);
+    flex-shrink: 0;
+    margin-top: 0.4rem;
+  }
+
+  .pipeline-connector {
+    width: 1px;
+    height: 100%;
+    min-height: 40px;
+    background: var(--border);
+  }
+
+  .pipeline-content {
+    padding-bottom: 1.5rem;
+  }
+
+  .pipeline-title {
+    font-weight: 500;
+    color: #e0e0f0;
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .pipeline-desc {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 4rem 1.5rem 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  footer a {
+    color: var(--accent2);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  footer a:hover { color: var(--accent3); }
+
+  .footer-links {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .footer-links a {
+    font-size: 0.85rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .footer-copy {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<div class="content">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-badge">Hackathon Retrospective</div>
+    <h1 class="hero-title">OKKO in OKKY</h1>
+    <p class="hero-sub">OKKY 제1회 AI 바이브코딩 미니 해커톤</p>
+    <div class="hero-meta">
+      <span><span class="dot"></span>2026.02.21</span>
+      <span><span class="dot"></span>4시간</span>
+      <span><span class="dot"></span>15팀 중 3등</span>
+      <span><span class="dot"></span>우수상</span>
+    </div>
+    <div class="scroll-hint">SCROLL</div>
+  </div>
+
+  <!-- Chapter 1: 시작 -->
+  <section class="reveal">
+    <div class="section-label">chapter 01 — the beginning</div>
+    <h2>코드를 치지 말 것.</h2>
+    <p>어쩌다 보니 공고도 마감된 해커톤을 스파르타 카르텔에 힘입어 참여할 기회가 생겼다.</p>
+    <p>이름하여 <span class="highlight">OKKY 제1회 AI 바이브코딩 미니 해커톤</span>. 물론 그 이름에서 아저씨 향기가 날 순 있지만 그래도 오래 살아남은 몇 안되는 개발자 커뮤니티로 무시할 순 없다.</p>
+    <p>룰은 단순 간단하지만 오묘했다. 개발자를 데려다 놓고 코드를 치지 말라는 룰. 해커톤이라고 불러도 되나 싶을 정도로 짧은 <span class="accent-text">4시간</span>의 작업시간.</p>
+
+    <div class="img-card">
+      <img src="images/img1.png" alt="오늘의 코디 OKKO 발표 타이틀" loading="lazy">
+      <div class="img-caption">Team OKKO — 전신 사진 한 장으로 완성하는 AI 기반 가상 코디네이션 서비스</div>
+    </div>
+  </section>
+
+  <div class="divider"><div class="divider-line"></div></div>
+
+  <!-- Chapter 2: 아이디어 -->
+  <section class="reveal">
+    <div class="section-label">chapter 02 — the idea</div>
+    <h2>오늘의 코디, OKKO</h2>
+    <p>AI가 다 만들어내는 세상에서 인간은 뭘 하면 좋을까. <span class="highlight">심미적인 선택</span>이 그 마지노선이 아닐까 싶은 마음이었다.</p>
+    <p>전신 사진 한 장을 올리면 AI가 옷을 인식하고, 분석하고, 가상 옷장을 만들어주고, 코디까지 제안해주는 서비스. 인간은 최종 선택만 하면 된다.</p>
+
+    <div class="img-grid">
+      <div class="img-card">
+        <img src="images/img2.png" alt="서비스 컨셉" loading="lazy">
+        <div class="img-caption">서비스 컨셉 — 옷장 분석</div>
+      </div>
+      <div class="img-card">
+        <img src="images/img3.png" alt="스마트 클로젯" loading="lazy">
+        <div class="img-caption">스마트 클로젯 기능</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"><div class="divider-line"></div></div>
+
+  <!-- Chapter 3: 구현 -->
+  <section class="section-wide reveal">
+    <div class="section-label">chapter 03 — the build</div>
+    <h2>4시간의 기록</h2>
+
+    <div class="pipeline">
+      <div class="pipeline-step">
+        <div class="pipeline-line"><div class="pipeline-dot"></div><div class="pipeline-connector"></div></div>
+        <div class="pipeline-content">
+          <div class="pipeline-title">사진 업로드 & 얼굴 모자이크</div>
+          <div class="pipeline-desc">전신 사진을 올리면 OpenCV.js + YuNet 모델로 얼굴을 클라이언트에서 즉시 블러 처리. 서버에 얼굴이 전송되지 않는다.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="pipeline-line"><div class="pipeline-dot"></div><div class="pipeline-connector"></div></div>
+        <div class="pipeline-content">
+          <div class="pipeline-title">AI 세그멘테이션</div>
+          <div class="pipeline-desc">Replicate SAM3 API로 상의/하의/신발/원피스를 자동 분리. 4개 카테고리를 병렬로 처리.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="pipeline-line"><div class="pipeline-dot"></div><div class="pipeline-connector"></div></div>
+        <div class="pipeline-content">
+          <div class="pipeline-title">소재 분석 & 프로덕트 샷 생성</div>
+          <div class="pipeline-desc">LLM이 소재와 색상을 분석하고, GPT Image로 깔끔한 프로덕트 샷을 생성. 배경 제거는 WASM으로 클라이언트에서 처리.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="pipeline-line"><div class="pipeline-dot"></div><div class="pipeline-connector"></div></div>
+        <div class="pipeline-content">
+          <div class="pipeline-title">가상 옷장 저장</div>
+          <div class="pipeline-desc">Supabase에 저장. 익명 인증으로 시작해서 나중에 계정 연결 가능.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="pipeline-line"><div class="pipeline-dot"></div></div>
+        <div class="pipeline-content">
+          <div class="pipeline-title">코디 프리뷰</div>
+          <div class="pipeline-desc">프리셋 모델을 선택하고 옷을 조합하면 AI가 가상 피팅 이미지를 생성.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="img-grid">
+      <div class="img-card">
+        <img src="images/img4.png" alt="사용자 플로우" loading="lazy">
+        <div class="img-caption">사용자 플로우 (5단계)</div>
+      </div>
+      <div class="img-card">
+        <img src="images/img5.png" alt="시스템 아키텍처" loading="lazy">
+        <div class="img-caption">시스템 아키텍처</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"><div class="divider-line"></div></div>
+
+  <!-- Chapter 4: 기술 스택 -->
+  <section class="reveal">
+    <div class="section-label">chapter 04 — the stack</div>
+    <h2>기술 스택</h2>
+
+    <div class="tech-grid">
+      <div class="tech-item"><div class="tech-name">Next.js 16</div><div class="tech-role">풀스택 프레임워크</div></div>
+      <div class="tech-item"><div class="tech-name">React 19</div><div class="tech-role">UI</div></div>
+      <div class="tech-item"><div class="tech-name">TypeScript</div><div class="tech-role">타입 안전성</div></div>
+      <div class="tech-item"><div class="tech-name">Supabase</div><div class="tech-role">DB + Auth + Storage</div></div>
+      <div class="tech-item"><div class="tech-name">OpenCV.js</div><div class="tech-role">얼굴 블러</div></div>
+      <div class="tech-item"><div class="tech-name">SAM3</div><div class="tech-role">세그멘테이션</div></div>
+      <div class="tech-item"><div class="tech-name">GPT Image</div><div class="tech-role">이미지 생성</div></div>
+      <div class="tech-item"><div class="tech-name">Tailwind 4</div><div class="tech-role">스타일링</div></div>
+    </div>
+
+    <div class="img-card">
+      <img src="images/img6.png" alt="주요 기능 및 UI" loading="lazy">
+      <div class="img-caption">주요 기능 & UI</div>
+    </div>
+  </section>
+
+  <div class="divider"><div class="divider-line"></div></div>
+
+  <!-- Chapter 5: 서비스 -->
+  <section class="reveal">
+    <div class="section-label">chapter 05 — the service</div>
+    <h2>실제 서비스</h2>
+
+    <div class="img-grid">
+      <div class="img-card">
+        <img src="images/service1.png" alt="오늘의 코디 랜딩 페이지" loading="lazy">
+        <div class="img-caption">랜딩 페이지</div>
+      </div>
+      <div class="img-card">
+        <img src="images/service4.png" alt="내 옷장" loading="lazy">
+        <div class="img-caption">내 옷장</div>
+      </div>
+    </div>
+
+    <div class="img-card">
+      <img src="images/img7.png" alt="가치 제안 및 향후 계획" loading="lazy">
+      <div class="img-caption">가치 제안 — Digital Closet / My Taste / Human Centric</div>
+    </div>
+  </section>
+
+  <div class="divider"><div class="divider-line"></div></div>
+
+  <!-- Chapter 6: 철학 -->
+  <section class="reveal">
+    <div class="section-label">chapter 06 — the philosophy</div>
+    <h2>헤이 자비스, 아이언맨 만들어줘.</h2>
+
+    <p>백케스팅이라는 개념이 있다. 신기술이 나타났을 때 <span class="highlight">"어? 이거 영화에서 본적 있는데?"</span> 싶은 마음이 바로 그 부분이다.</p>
+    <p>각본가가 미래의 신기술을 예상하는 것이 아니라 새로운 기술이 개발될 때 미디어 매체로부터 영향을 받는다는 개념이다.</p>
+    <p>내가 아는 영화 중 AI를 가장 자연스럽게 다룬 영화는 아이언맨이었다.</p>
+
+    <div class="quote-block">
+      <p>당연히 뚝딱 만들어줬다. 고고도에선 아이싱 문제로 얼어붙어서 죽을뻔하게.</p>
+      <p>헤이 자비스 고쳐줘.</p>
+      <p>당연히 뚝딱 고쳐줬다. 집이 아니면 입지도 벗지도 못하게.</p>
+      <p>헤이 자비스 고쳐줘.</p>
+      <p>당연히 뚝딱 고쳐줬다. 슈트를 들고다닐 수 있게.</p>
+    </div>
+
+    <p>모나코서킷에서 박살나고 몸에 나노로 심는 것까지 이어서 계속해서 개선해나간다.</p>
+    <p><span class="accent-text">AI가 짱짱 강한 슈퍼 히어로가 되는 세계관에서도 여전히 토니 스타크의 오케스트레이션이 필요했다.</span></p>
+    <p>바이브 코딩이 그 일종이 아닌가 싶다.</p>
+
+    <div class="quote-block">
+      <p>"몇 명 구할 수 있지?"</p>
+      <p>"팔 다리 각각 모두 사용하면 네명까지 가능합니다."</p>
+      <div class="quote-src">— 비행기가 공중에서 터져서 승객들이 떨어지고 있는 순간</div>
+    </div>
+
+    <p>토니는 그 세계관에서도 자비스의 조언에 "그럼 네명을 구하자!" 라고 하지 않고 <span class="highlight">모두의 손을 이어서 구하는 방법은 어떤지</span> 다시 검토를 제안했다.</p>
+    <p>다시금 1학년 필수 교양에 들어갔던 논리와 비판적 사고가 요즘 시대에 얼마나 필요한지 깨달았다.</p>
+  </section>
+
+  <div class="divider"><div class="divider-line"></div></div>
+
+  <!-- Award -->
+  <section class="award-section reveal">
+    <div class="section-label">chapter 07 — the result</div>
+    <div class="award-badge">우수상</div>
+    <h2>15팀 중 3등</h2>
+    <p class="award-detail">잘 했다기 보단 취지에 맞았다라는 해석이 맞아 보인다.<br>그치만 정말 기상천외한 분들이 많았다.<br>4시간만에 파이썬 GC를 개선하신 분부터 별의별 자동화가 다 나왔다.</p>
+
+    <div class="img-card" style="max-width: 600px; margin: 2rem auto;">
+      <img src="images/img8.png" alt="우수상 수상" loading="lazy">
+      <div class="img-caption">OKKY 제1회 AI 바이브코딩 미니 해커톤 — 우수상</div>
+    </div>
+  </section>
+
+  <div class="divider"><div class="divider-line"></div></div>
+
+  <!-- Epilogue -->
+  <section class="reveal" style="text-align: center; padding: 6rem 1.5rem;">
+    <p style="font-size: 1.2rem; font-weight: 400; color: #e0e0f0;">OKKO in OKKY.</p>
+    <p style="font-size: 1.5rem; font-weight: 300; color: var(--text-dim); margin-top: 1rem;">겨울이었다....</p>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-links">
+      <a href="https://github.com/okko93837/okko-in-okky" target="_blank">GitHub</a>
+      <a href="https://www.instagram.com/p/DVBoDdgkpv2" target="_blank">Instagram</a>
+      <a href="https://songclaude-bot.github.io" target="_blank">Home</a>
+    </div>
+    <div class="footer-copy">
+      human + claude &middot; 2026
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  // Stars
+  const canvas = document.getElementById('stars');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+
+  function initStars() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    stars = [];
+    const count = Math.floor((canvas.width * canvas.height) / 5000);
+    for (let i = 0; i < count; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 1.2 + 0.2,
+        alpha: Math.random(),
+        delta: (Math.random() * 0.015 + 0.003) * (Math.random() < 0.5 ? 1 : -1)
+      });
+    }
+  }
+
+  function drawStars() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    stars.forEach(s => {
+      s.alpha += s.delta;
+      if (s.alpha <= 0.05 || s.alpha >= 1) s.delta *= -1;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(150, 160, 220, ${s.alpha})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(drawStars);
+  }
+
+  window.addEventListener('resize', initStars);
+  initStars();
+  drawStars();
+
+  // Scroll Reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
