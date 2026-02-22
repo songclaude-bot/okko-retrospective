@@ -111,25 +111,6 @@
     background: var(--accent);
   }
 
-  .scroll-hint {
-    position: absolute;
-    bottom: 2rem;
-    font-size: 0.7rem;
-    letter-spacing: 0.2em;
-    color: var(--text-dim);
-    opacity: 0;
-    animation: fadeUp 1s ease forwards 1.2s;
-  }
-
-  .scroll-hint::after {
-    content: '';
-    display: block;
-    width: 1px; height: 30px;
-    background: linear-gradient(to bottom, var(--text-dim), transparent);
-    margin: 0.5rem auto 0;
-    animation: scrollPulse 2s ease-in-out infinite;
-  }
-
   /* Sections */
   section {
     max-width: 800px;
@@ -430,7 +411,6 @@
       <span><span class="dot"></span>15팀 중 3등</span>
       <span><span class="dot"></span>우수상</span>
     </div>
-    <div class="scroll-hint">SCROLL</div>
   </div>
 
   <!-- Chapter 1: 시작 -->
@@ -567,31 +547,52 @@
   <!-- Chapter 6: 철학 -->
   <section class="reveal">
     <div class="section-label">chapter 06 — the philosophy</div>
-    <h2>헤이 자비스, 아이언맨 만들어줘.</h2>
+    <h2>백케스팅</h2>
 
     <p>백케스팅이라는 개념이 있다. 신기술이 나타났을 때 <span class="highlight">"어? 이거 영화에서 본적 있는데?"</span> 싶은 마음이 바로 그 부분이다.</p>
     <p>각본가가 미래의 신기술을 예상하는 것이 아니라 새로운 기술이 개발될 때 미디어 매체로부터 영향을 받는다는 개념이다.</p>
     <p>내가 아는 영화 중 AI를 가장 자연스럽게 다룬 영화는 아이언맨이었다.</p>
+  </section>
+
+  <div class="divider"><div class="divider-line"></div></div>
+
+  <section class="reveal">
+    <div class="section-label">chapter 07 — hey jarvis</div>
+    <h2>헤이 자비스, 아이언맨 만들어줘.</h2>
+
+    <p>당연히 뚝딱 만들어줬다. 고고도에선 아이싱 문제로 얼어붙어서 죽을뻔하게.</p>
 
     <div class="quote-block">
-      <p>당연히 뚝딱 만들어줬다. 고고도에선 아이싱 문제로 얼어붙어서 죽을뻔하게.</p>
       <p>헤이 자비스 고쳐줘.</p>
-      <p>당연히 뚝딱 고쳐줬다. 집이 아니면 입지도 벗지도 못하게.</p>
-      <p>헤이 자비스 고쳐줘.</p>
-      <p>당연히 뚝딱 고쳐줬다. 슈트를 들고다닐 수 있게.</p>
     </div>
+
+    <p>당연히 뚝딱 고쳐줬다. 집이 아니면 입지도 벗지도 못하게.</p>
+
+    <div class="quote-block">
+      <p>헤이 자비스 고쳐줘.</p>
+    </div>
+
+    <p>당연히 뚝딱 고쳐줬다. 슈트를 들고다닐 수 있게.</p>
 
     <p>모나코서킷에서 박살나고 몸에 나노로 심는 것까지 이어서 계속해서 개선해나간다.</p>
     <p><span class="accent-text">AI가 짱짱 강한 슈퍼 히어로가 되는 세계관에서도 여전히 토니 스타크의 오케스트레이션이 필요했다.</span></p>
     <p>바이브 코딩이 그 일종이 아닌가 싶다.</p>
+  </section>
+
+  <div class="divider"><div class="divider-line"></div></div>
+
+  <section class="reveal">
+    <div class="section-label">chapter 08 — tony stark</div>
+    <h2>"몇 명 구할 수 있지?"</h2>
+
+    <p>비행기가 공중에서 터져서 승객들이 떨어지고 있는 순간에 토니는 자비스에게 물었다.</p>
 
     <div class="quote-block">
-      <p>"몇 명 구할 수 있지?"</p>
       <p>"팔 다리 각각 모두 사용하면 네명까지 가능합니다."</p>
-      <div class="quote-src">— 비행기가 공중에서 터져서 승객들이 떨어지고 있는 순간</div>
     </div>
 
     <p>토니는 그 세계관에서도 자비스의 조언에 "그럼 네명을 구하자!" 라고 하지 않고 <span class="highlight">모두의 손을 이어서 구하는 방법은 어떤지</span> 다시 검토를 제안했다.</p>
+    <p><span class="accent-text">토니! 너 정말 핵심을 찔렀어!</span></p>
     <p>다시금 1학년 필수 교양에 들어갔던 논리와 비판적 사고가 요즘 시대에 얼마나 필요한지 깨달았다.</p>
   </section>
 
@@ -599,7 +600,7 @@
 
   <!-- Award -->
   <section class="award-section reveal">
-    <div class="section-label">chapter 07 — the result</div>
+    <div class="section-label">chapter 09 — the result</div>
     <div class="award-badge">우수상</div>
     <h2>15팀 중 3등</h2>
     <p class="award-detail">잘 했다기 보단 취지에 맞았다라는 해석이 맞아 보인다.<br>그치만 정말 기상천외한 분들이 많았다.<br>4시간만에 파이썬 GC를 개선하신 분부터 별의별 자동화가 다 나왔다.</p>
@@ -621,9 +622,7 @@
   <!-- Footer -->
   <footer>
     <div class="footer-links">
-      <a href="https://github.com/okko93837/okko-in-okky" target="_blank">GitHub</a>
-      <a href="https://www.instagram.com/p/DVBoDdgkpv2" target="_blank">Instagram</a>
-      <a href="https://songclaude-bot.github.io" target="_blank">Home</a>
+      <a href="https://songclaude-bot.github.io">Home</a>
     </div>
     <div class="footer-copy">
       human + claude &middot; 2026
